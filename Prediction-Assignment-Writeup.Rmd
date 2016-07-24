@@ -1,0 +1,87 @@
+---
+title: "Prediction Assignment Writeup"
+author: "Chengping Wu"
+date: "July 27, 2016"
+output: html_document
+---
+
+The goal of this project is to predict how well people did the exercise based on the Weight Lifting Exercise Dataset from "http://groupware.les.inf.puc-rio.br/har". 
+
+## Data Loading and Cleaning
+The 2 datasets,i.e., the training dataset (pml-training.csv) and the testing dataset (pml-testing.csv) are downloaded into the current directory and loaded with "read.csv". By closer inspection,the first 7 columns are not 
+pertinent as they are either user information or time-series data and will be removed. In addition, there are many columns either "NA" or empty and will also be removed. In the end, only 53 columns are left out of the original 160 columns.
+
+```{r}
+pml_training <- read.csv("pml-training.csv")
+pml_testing<-read.csv("pml-testing.csv")
+training<-pml_training[,-c(1:7,12:36, 50:59, 69:83,87:101,103:112,125:139,141:150)]
+testing<-pml_testing[,-c(1:7,12:36, 50:59, 69:83,87:101,103:112,125:139,141:150)]
+dim(training)
+dim(testing)
+```
+
+## Data spliting for training data
+Because the data is reasonably large, the training data is split with 75% for model training and 25% for out of sample error prediction.
+
+```{r}
+library(caret)
+set.seed(1111)
+inTrain <- createDataPartition(y=training$classe, p=0.75, list=F)
+Part_training <- training[inTrain,]
+Part_testing <- training[-inTrain,]
+dim(Part_training)
+dim(Part_testing)
+```
+
+## Model Selection
+The Part_training part of the training data is used to train 3 types of models: linear discriminant, random forest, and boosting. The 4-fold cross validation is achieved by using the train function in caret package with setting the method="cv" in the trainControl function. This will automatically choose the best model of each category based on cross-validation result.
+```{r}
+library(MASS)
+library(randomForest)
+library(gbm)
+library(survival)
+library(caret)
+library(randomForest)
+set.seed(1111)
+mod_lda <- train(classe ~ .,
+                data = Part_training, 
+                method = 'lda', 
+                trControl = trainControl(method = "cv", 
+                                         number = 4, 
+                                         allowParallel = TRUE, 
+                                         verboseIter = TRUE))
+
+mod_rf <- train(classe ~ .,
+                data = Part_training, 
+                method = 'rf', 
+                trControl = trainControl(method = "cv", 
+                                         number = 4, 
+                                         allowParallel = TRUE, 
+                                         verboseIter = TRUE))
+
+mod_gbm <- train(classe ~ .,
+                data = Part_training, 
+                method = 'gbm', 
+                trControl = trainControl(method = "cv", 
+                                         number = 4, 
+                                         allowParallel = TRUE, 
+                                         verboseIter = TRUE))
+```
+
+The Part_testing part of the training data is used predict the out-of-sample error. The random forest obtains the highest accuracy of 0.9937, while the boosting gets a lower accuracy of 0.9639, and the linear discriminant analysis gets the lowest accuracy of 0.7021. Thus the random forest model is selected to apply on the Test set in the next section.
+
+```{r}
+pred_lda <- predict(mod_lda,Part_testing)
+confusionMatrix(pred_lda,Part_testing$classe)
+pred_rf <- predict(mod_rf,Part_testing)
+confusionMatrix(pred_rf,Part_testing$classe)
+pred_gbm <- predict(mod_gbm,Part_testing)
+confusionMatrix(pred_gbm,Part_testing$classe)
+```
+
+## Random Forest Model apllied to Test Set
+The most accurate Random Forest Model is applied to the Test Set to identify the "classe" of 20 samples. Since the features are exactly the same in Test Set, the prediction can be done right away.
+
+```{r}
+pred_rf_test<- predict(mod_rf,testing)
+```
