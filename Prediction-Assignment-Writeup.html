@@ -11,7 +11,7 @@
 
 <meta name="author" content="Chengping Wu" />
 
-<meta name="date" content="2016-07-27" />
+<meta name="date" content="2016-07-24" />
 
 <title>Prediction Assignment Writeup</title>
 
@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Prediction Assignment Writeup</h1>
 <h4 class="author"><em>Chengping Wu</em></h4>
-<h4 class="date"><em>July 27, 2016</em></h4>
+<h4 class="date"><em>July 24, 2016</em></h4>
 
 </div>
 
@@ -522,7 +522,7 @@ mod_lda &lt;- train(classe ~ .,
 ##    120        0.2265             nan     0.1000    0.0024
 ##    140        0.1892             nan     0.1000    0.0017
 ##    150        0.1774             nan     0.1000    0.0016</code></pre>
-<p>The Part_testing part of the training data is used predict the out-of-sample error. The random forest obtains the highest accuracy of 0.9937, while the boosting gets a lower accuracy of 0.9635, and the linear discriminant analysis gets the lowest accuracy of 0.7021. Thus the random forest model is selected to apply on the Test set in the next section.</p>
+<p>The Part_testing part of the training data is used predict the out-of-sample error. The random forest obtains the highest accuracy of 0.9937, while the boosting gets a lower accuracy of 0.9639, and the linear discriminant analysis gets the lowest accuracy of 0.7021. Thus the random forest model is selected to apply on the Test set in the next section.</p>
 <pre class="r"><code>pred_lda &lt;- predict(mod_lda,Part_testing)
 confusionMatrix(pred_lda,Part_testing$classe)</code></pre>
 <pre><code>## Confusion Matrix and Statistics
@@ -626,7 +626,10 @@ confusionMatrix(pred_gbm,Part_testing$classe)</code></pre>
 <div id="random-forest-model-apllied-to-test-set" class="section level2">
 <h2>Random Forest Model apllied to Test Set</h2>
 <p>The most accurate Random Forest Model is applied to the Test Set to identify the “classe” of 20 samples. Since the features are exactly the same in Test Set, the prediction can be done right away.</p>
-<pre class="r"><code>pred_rf_test&lt;- predict(mod_rf,testing)</code></pre>
+<pre class="r"><code>pred_rf_test&lt;- predict(mod_rf,testing)
+pred_rf_test</code></pre>
+<pre><code>##  [1] B A B A A E D B A A B C B A E E A B B B
+## Levels: A B C D E</code></pre>
 </div>
 
 

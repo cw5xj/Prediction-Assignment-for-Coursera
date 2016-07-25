@@ -1,7 +1,7 @@
 ---
 title: "Prediction Assignment Writeup"
 author: "Chengping Wu"
-date: "July 27, 2016"
+date: "July 24, 2016"
 output: html_document
 ---
 
@@ -84,4 +84,5 @@ The most accurate Random Forest Model is applied to the Test Set to identify the
 
 ```{r}
 pred_rf_test<- predict(mod_rf,testing)
+pred_rf_test
 ```
