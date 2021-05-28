@@ -1,4 +1,4 @@
-This is my fisrt line. Add conflict on master branch
+This is my fisrt line. Add conflict on master branch to see how merge handles it
 
 Second line!!!
 
