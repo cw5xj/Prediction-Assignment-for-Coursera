@@ -1,4 +1,4 @@
-This is my fisrt line. Add to test branch merging
+This is my fisrt line. Add conflict on master branch
 
 Second line!!!
 
